@@ -26,24 +26,24 @@ namespace Lyra.TaskService.API.Controllers
         }
 
         // GET: api/WorkItems/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<WorkItem>> GetWorkItem(int id)
-        //{
-        //    var workItem = await _context.WorkItems.FindAsync(id);
+        [HttpGet("{id}")]
+        public async Task<ActionResult<WorkItem>> GetWorkItem(int id)
+        {
+            var workItem = await _context.WorkItems.FindAsync(id);
 
-        //    if (workItem == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (workItem == null)
+            {
+                return NotFound();
+            }
 
-        //    return workItem;
-        //}
+            return workItem;
+        }
 
         [HttpGet]
         [Route("GetByUserId")]
         public async Task<ActionResult<IEnumerable<WorkItem>>> GetWorkItemByUserId(int id)
         {
-            IQueryable<WorkItem> workItem = _context.WorkItems.Where(x => x.UserId.Equals(id));
+            IQueryable<WorkItem> workItem = _context.WorkItems.Where(x => x.UserId.Equals(id)).OrderByDescending(x => x.UpdatedTime);
 
             if (workItem == null)
             {
@@ -63,6 +63,7 @@ namespace Lyra.TaskService.API.Controllers
                 return BadRequest();
             }
 
+            workItem.UpdatedTime = DateTime.Now;
             _context.Entry(workItem).State = EntityState.Modified;
 
             try
@@ -89,6 +90,7 @@ namespace Lyra.TaskService.API.Controllers
         [HttpPost]
         public async Task<ActionResult<WorkItem>> PostWorkItem(WorkItem workItem)
         {
+            workItem.CreatedTime = workItem.UpdatedTime = DateTime.Now;
             _context.WorkItems.Add(workItem);
             await _context.SaveChangesAsync();
 
