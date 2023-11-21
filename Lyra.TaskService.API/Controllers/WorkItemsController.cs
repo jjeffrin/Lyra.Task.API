@@ -121,9 +121,8 @@ namespace Lyra.TaskService.API.Controllers
         private DateTime GetIndianTime()
         {
             // get correct date & time
-            DateTime utcDateTime = DateTime.Now.ToUniversalTime();
             TimeZoneInfo indTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-            return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, indTimeZone);
+            return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, indTimeZone);
         }
     }
 }
