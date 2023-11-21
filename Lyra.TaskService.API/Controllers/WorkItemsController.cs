@@ -63,7 +63,7 @@ namespace Lyra.TaskService.API.Controllers
                 return BadRequest();
             }
 
-            workItem.UpdatedTime = DateTime.Now;
+            workItem.UpdatedTime = this.GetIndianTime();
             _context.Entry(workItem).State = EntityState.Modified;
 
             try
@@ -90,7 +90,7 @@ namespace Lyra.TaskService.API.Controllers
         [HttpPost]
         public async Task<ActionResult<WorkItem>> PostWorkItem(WorkItem workItem)
         {
-            workItem.CreatedTime = workItem.UpdatedTime = DateTime.Now;
+            workItem.CreatedTime = workItem.UpdatedTime = this.GetIndianTime();
             _context.WorkItems.Add(workItem);
             await _context.SaveChangesAsync();
 
@@ -116,6 +116,14 @@ namespace Lyra.TaskService.API.Controllers
         private bool WorkItemExists(int id)
         {
             return _context.WorkItems.Any(e => e.Id == id);
+        }
+
+        private DateTime GetIndianTime()
+        {
+            // get correct date & time
+            DateTime utcDateTime = DateTime.Now.ToUniversalTime();
+            TimeZoneInfo indTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+            return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, indTimeZone);
         }
     }
 }
