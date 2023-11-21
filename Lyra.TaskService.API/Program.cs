@@ -35,7 +35,8 @@ builder.Services.AddCors(o => o.AddPolicy("LyraPolicy", builder =>
             .AllowAnyHeader()
             .SetIsOriginAllowed((host) =>
             {
-                return true;
+                if (host.Equals("https://lyra.jjeffr.in")) return true;
+                return false;
             })
             .AllowCredentials();
 }));
