@@ -35,7 +35,7 @@ builder.Services.AddCors(o => o.AddPolicy("LyraPolicy", builder =>
             .AllowAnyHeader()
             .SetIsOriginAllowed((host) =>
             {
-                if (host.Equals("https://localhost:3000")) return true;
+                if (host.Equals("https://lyra.jjeffr.in")) return true;
                 return false;
             })
             .AllowCredentials();
@@ -64,20 +64,23 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = "Lyra",
         ValidIssuer = "Lyra",
         RequireExpirationTime = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("e1eb05e1-b13a-4e14-beca-839b82c4feda")),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Keys:SecurityKey").Value!)),
         ValidateIssuerSigningKey = true
     };
 });
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
+app.MapHealthChecks("/health");
 app.UseHttpsRedirection();
 app.UseCors("LyraPolicy");
 
