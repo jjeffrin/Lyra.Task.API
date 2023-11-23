@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen(opt =>
 
 builder.Services.AddDbContext<TaskDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(Environment.GetEnvironmentVariable("SQLAZURECONNSTR_AzureSQLDatabaseConnection"));
 });
 
 builder.Services.AddCors(o => o.AddPolicy("LyraPolicy", builder =>
@@ -60,7 +60,7 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = "Lyra",
         ValidIssuer = "Lyra",
         RequireExpirationTime = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Keys:SecurityKey").Value!)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SecurityKey")!)),
         ValidateIssuerSigningKey = true
     };
 });
