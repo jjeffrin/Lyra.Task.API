@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Lyra.TaskService.API.DataAccess;
 using Lyra.TaskService.API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Lyra.TaskService.API.DTOs;
 
 namespace Lyra.TaskService.API.Controllers
 {
@@ -97,11 +98,11 @@ namespace Lyra.TaskService.API.Controllers
             return CreatedAtAction("GetWorkItem", new { id = workItem.Id }, workItem);
         }
 
-        // DELETE: api/WorkItems/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWorkItem(int id)
+        // DELETE: api/WorkItems
+        [HttpDelete]
+        public async Task<IActionResult> DeleteWorkItem(WorkItemDeleteRequest request)
         {
-            var workItem = await _context.WorkItems.FindAsync(id);
+            var workItem = await _context.WorkItems.FirstAsync(x => x.UserId.Equals(request.UserId) && x.Id.Equals(request.Id));
             if (workItem == null)
             {
                 return NotFound();
